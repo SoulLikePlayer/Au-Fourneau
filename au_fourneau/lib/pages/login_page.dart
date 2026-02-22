@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'register_page.dart';
-import '../models/user.dart';
-import '../services/local_database.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,29 +10,60 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _emailController = TextEditingController(); 
-  final _passwordController = TextEditingController(); 
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      final user = LocalDatabase.getUsers().firstWhere(
-        (u) => u.nom.toLowerCase() == _emailController.text.toLowerCase(),
-        orElse: () => User(nom: "", prenom: "", ville: ""),
+ void _login() async {
+  if (_formKey.currentState!.validate()) {
+    try {
+      await Supabase.instance.client.auth.signInWithPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
       );
 
-      if (user.nom.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Bienvenue ${user.prenom} de ${user.ville} ! 🎉")),
+      final user = Supabase.instance.client.auth.currentUser;
+
+      if (user != null && user.emailConfirmedAt == null) {
+        await Supabase.instance.client.auth.signOut();
+
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text("Email non vérifié"),
+            content: Text(
+              "Veuillez vérifier votre adresse email (${user.email}) avant de vous connecter.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
         );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Utilisateur non trouvé")),
-        );
+
+        return;
       }
+
+      final profile = await Supabase.instance.client
+          .from('users')
+          .select()
+          .eq('id', user!.id)
+          .single();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Bienvenue ${profile['prenom']} 🎉")),
+      );
+
+    } on Exception catch (exception)  {
+      print('Unknown exception: $exception');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email ou mot de passe incorrect")),
+      );
     }
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,21 +82,15 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 40),
                 TextFormField(
                   controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: "Nom (identifiant)",
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: const InputDecoration(labelText: "Email"),
                   validator: (value) =>
-                      value!.isEmpty ? "Veuillez entrer votre nom" : null,
+                      value!.isEmpty ? "Veuillez entrer votre email" : null,
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: "Mot de passe",
-                    border: OutlineInputBorder(),
-                  ),
+                  decoration: const InputDecoration(labelText: "Mot de passe"),
                   validator: (value) =>
                       value!.isEmpty ? "Veuillez entrer un mot de passe" : null,
                 ),
