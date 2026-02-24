@@ -26,15 +26,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Accueil"),
-        actions: [
-          IconButton(
-            onPressed: _logout,
-            icon: const Icon(Icons.logout),
-          )
-        ],
-      ),
       body: Center(
         child: Text(
           "Bienvenue ${user?.email ?? ''}",

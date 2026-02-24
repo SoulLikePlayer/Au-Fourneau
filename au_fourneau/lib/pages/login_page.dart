@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'register_page.dart';
-import 'home_page.dart';
+import '../main_layout.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(builder: (_) => const MainLayout()),
       );
     } on Exception catch (exception)  {
       print('Unknown exception: $exception');
