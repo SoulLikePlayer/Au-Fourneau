@@ -40,9 +40,9 @@ class _RegisterPageState extends State<RegisterPage> {
         );
         Navigator.pop(context);
       }
-    } catch (e) {
+    } on Exception catch (message) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Erreur lors de l'inscription")),
+        SnackBar(content: Text("Erreur lors de l'inscription : $message")),
       );
     }
   }
