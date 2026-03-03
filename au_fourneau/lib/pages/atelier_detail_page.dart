@@ -15,6 +15,7 @@ class AtelierDetailPage extends StatelessWidget {
 
     final isPaid = atelier['is_paid'] ?? false;
     final price = atelier['price'];
+    final points = atelier['points_reward'] ?? 0;
     final date = DateTime.parse(atelier['start_at']);
 
     return Scaffold(
@@ -70,15 +71,37 @@ class AtelierDetailPage extends StatelessWidget {
                           : Colors.green.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
-                      isPaid
-                          ? "${price?.toStringAsFixed(0)}€"
-                          : "Gratuit",
-                      style: TextStyle(
-                        color:
-                            isPaid ? Colors.orange : Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          isPaid
+                              ? "${price?.toStringAsFixed(0)}€"
+                              : "Gratuit",
+                          style: TextStyle(
+                            color: isPaid ? Colors.orange : Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        const Icon(
+                          Icons.star,
+                          size: 16,
+                          color: Colors.amber,
+                        ),
+
+                        const SizedBox(width: 4),
+
+                        Text(
+                          "+$points pts",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
