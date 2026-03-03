@@ -8,11 +8,9 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: const Text(
-        "Au Fourneaux !",
-        style: TextStyle(fontWeight: FontWeight.bold),
+      title: Image.asset(
+        '../../assets/icon.png'
       ),
-      centerTitle: true,
       actions: [
         IconButton(
           icon: const Icon(Icons.logout),
