@@ -1,3 +1,4 @@
+import 'package:au_fourneau/pages/atelier_detail_page.dart';
 import 'package:au_fourneau/widgets/atelier_card.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -151,8 +152,14 @@ class _HomePageState extends State<HomePage> {
                                         .toDouble()
                                     : null,
                                 onTap: () {
-                                  debugPrint(
-                                      "Atelier ${atelier['id']} cliqué");
+                                   Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => AtelierDetailPage(
+                                        atelier: atelier,
+                                      ),
+                                    ),
+                                  );
                                 },
                               );
                             },
