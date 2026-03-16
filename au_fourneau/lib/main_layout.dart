@@ -5,7 +5,8 @@ import 'pages/home_page.dart';
 import 'pages/profil_page.dart';
 
 class MainLayout extends StatefulWidget {
-  const MainLayout({super.key});
+    final bool isCook;
+  const MainLayout({super.key, required this.isCook,});
 
   @override
   State<MainLayout> createState() => _MainLayoutState();
@@ -14,10 +15,21 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [
-    HomePage(),
-    ProfilPage(),
-  ];
+  List<Widget> get _pages {
+    if (widget.isCook) {
+      return const [
+        HomePage(),
+        Placeholder(),
+        Placeholder(),
+        ProfilPage(),
+      ];
+    } else {
+      return const [
+        HomePage(),
+        ProfilPage(),
+      ];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +38,7 @@ class _MainLayoutState extends State<MainLayout> {
       body: _pages[_currentIndex],
       bottomNavigationBar: AppBottomNav(
         currentIndex: _currentIndex,
+        isCook: widget.isCook,
         onTap: (index) {
           setState(() {
             _currentIndex = index;

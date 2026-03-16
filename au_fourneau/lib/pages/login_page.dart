@@ -11,6 +11,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool isCook = false;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -53,13 +54,21 @@ class _LoginPageState extends State<LoginPage> {
           .eq('id', user!.id)
           .single();
 
+      final cook = await Supabase.instance.client
+          .from('cooks')
+          .select()
+          .eq('id', user.id)
+          .maybeSingle();
+
+      final bool isCook = cook != null;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Bienvenue ${profile['prenom']} 🎉")),
+        SnackBar(content: Text("Bienvenue ${profile['prenom']}")),
       );
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MainLayout()),
+        MaterialPageRoute(builder: (_) => MainLayout(isCook: isCook)),
       );
     } on Exception catch (exception)  {
       print('Unknown exception: $exception');

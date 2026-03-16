@@ -23,23 +23,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchAteliers() async {
-    try {
       final response = await supabase
           .from('ateliers')
           .select()
-          .gte('start_at', DateTime.now().toIso8601String())
+          .gte('start_at', DateTime.now().toUtc().toIso8601String())
           .order('start_at', ascending: true);
+
+          
 
       setState(() {
         ateliers = response;
         isLoading = false;
       });
-    } catch (e) {
-      debugPrint("Erreur fetch ateliers: $e");
-      setState(() {
-        isLoading = false;
-      });
-    }
   }
 
   @override
